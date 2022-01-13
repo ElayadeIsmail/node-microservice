@@ -8,12 +8,6 @@ interface UserAttrs {
   password: string;
 }
 
-interface User {
-  id: string;
-  email: string;
-  password: string;
-}
-
 interface UserModel extends mongoose.Model<UserDoc> {
   build: (attrs: UserAttrs) => UserDoc;
 }
