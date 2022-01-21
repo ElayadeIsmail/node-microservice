@@ -4,5 +4,8 @@
     "middlewares",
     "signin",
     "signout"
-  ]
+  ],
+  "yaml.schemas": {
+    "kubernetes://schema/v1%40service": "file:///Users/sam/Desktop/learning/node-microservices/ticketing/infra/k8s/auth-depl.yaml"
+  }
 }
