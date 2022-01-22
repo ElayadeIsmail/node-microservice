@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 let mongod: MongoMemoryServer;
 
 beforeAll(async () => {
+  process.env.JWT_KEY = 'qsdfgh';
   // This will create an new instance of "MongoMemoryServer" and automatically start it
   mongod = await MongoMemoryServer.create();
   const uri = mongod.getUri();

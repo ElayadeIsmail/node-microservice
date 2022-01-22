@@ -36,7 +36,7 @@ router.post(
     req.session = {
       jwt: userJwt,
     };
-    return res.status(200).send(user);
+    return res.status(201).send(user);
   }
 );
 
