@@ -28,14 +28,15 @@ router.post(
     if (!isMatch) {
       throw new BadRequestError('Invalid credentials');
     }
+    const userJwt = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+      },
+      process.env.JWT_KEY!
+    );
     req.session = {
-      jwt: jwt.sign(
-        {
-          id: user.id,
-          email: user.email,
-        },
-        process.env.JWT_KEY!
-      ),
+      jwt: userJwt,
     };
     res.send(user);
   }
