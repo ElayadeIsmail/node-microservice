@@ -1,6 +1,10 @@
 import express, { Request, Response } from 'express';
-import { body, validationResult } from 'express-validator';
-import { RequestValidatorError } from '../errors/request-validation-error';
+import { body } from 'express-validator';
+import jwt from 'jsonwebtoken';
+import { BadRequestError } from '../errors/bad-request-error';
+import { validateRequest } from '../middlewares/validate-request';
+import { User } from '../models/User';
+import { PasswordManager } from '../services/password';
 
 const router = express.Router();
 
@@ -13,12 +17,27 @@ router.post(
       .notEmpty()
       .withMessage('you must provide a password'),
   ],
+  validateRequest,
   async (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      throw new RequestValidatorError(errors.array());
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new BadRequestError('Invalid credentials');
     }
-    res.send('Hi there');
+    const isMatch = await PasswordManager.compare(user.password, password);
+    if (!isMatch) {
+      throw new BadRequestError('Invalid credentials');
+    }
+    req.session = {
+      jwt: jwt.sign(
+        {
+          id: user.id,
+          email: user.email,
+        },
+        process.env.JWT_KEY!
+      ),
+    };
+    res.send(user);
   }
 );
 
