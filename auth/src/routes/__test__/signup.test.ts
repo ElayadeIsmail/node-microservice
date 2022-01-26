@@ -14,12 +14,14 @@ it('returns a 400 with an invalid email', async () => {
     .send({ email: 'qsdqsqdq', password: 'password' })
     .expect(400);
 });
+
 it('returns a 400 with an invalid password', async () => {
   return request(app)
     .post('/api/users/signup')
     .send({ email: 'qsdqsqdq', password: 'p' })
     .expect(400);
 });
+
 it('returns a 400 with messing email and password', async () => {
   await request(app)
     .post('/api/users/signup')

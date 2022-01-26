@@ -7,6 +7,7 @@ it('fails when signin with email that does not exist', () => {
     .send({ email: 'sam@gmail.com', password: 'password' })
     .expect(400);
 });
+
 it('it fails when signin with invalid password', async () => {
   await request(app)
     .post('/api/users/signup')
@@ -17,6 +18,7 @@ it('it fails when signin with invalid password', async () => {
     .send({ email: 'sam@gmail.com', password: 'passw' })
     .expect(400);
 });
+
 it('it response with a cookie when valid credentials', async () => {
   await request(app)
     .post('/api/users/signup')
