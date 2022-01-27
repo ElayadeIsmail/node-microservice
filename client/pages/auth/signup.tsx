@@ -1,17 +1,27 @@
-import axios from 'axios'
 import { FormEvent, useState } from 'react'
+import { useRequest } from '../../hooks/useRequest'
+
+export type IResponseErrors = {
+  message: string
+  field?: string
+}
+
+export interface IPayload {
+  id: string
+  email: string
+}
 
 export default function SignUp() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const { doRequest, errors } = useRequest<any, any>({
+    method: 'post',
+    url: '/api/users/signup',
+    body: { email, password },
+  })
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    try {
-      const res = await axios.post('/api/users/signup', { email, password })
-      console.log(res.data)
-    } catch (error) {
-      console.log(error)
-    }
+    doRequest()
   }
   return (
     <div className="container">
@@ -41,6 +51,7 @@ export default function SignUp() {
             placeholder="Password"
           />
         </div>
+        {errors}
         <button
           type="submit"
           className="rounded-md border-0 bg-blue-600 p-2 text-white outline-none"
