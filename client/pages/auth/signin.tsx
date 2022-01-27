@@ -4,18 +4,9 @@ import { FormEvent, useState } from 'react'
 import { buildClient } from '../../api/buildClient'
 import { Header } from '../../components/Header'
 import { useRequest } from '../../hooks/useRequest'
+import { IUserPayload } from './signup'
 
-export type IResponseErrors = {
-  message: string
-  field?: string
-}
-
-export interface IUserPayload {
-  id: string
-  email: string
-}
-
-export default function SignUp({
+export default function SignIn({
   currentUser,
 }: {
   currentUser: IUserPayload | null
@@ -25,7 +16,7 @@ export default function SignUp({
   const router = useRouter()
   const { doRequest, errors } = useRequest<any, any>({
     method: 'post',
-    url: '/api/users/signup',
+    url: '/api/users/signin',
     body: { email, password },
     onSuccess: () => router.push('/'),
   })
@@ -38,7 +29,7 @@ export default function SignUp({
       <Header currentUser={currentUser} />
       <div className="container">
         <form onSubmit={onSubmit}>
-          <h2 className="my-2 text-lg font-semibold text-blue-700">Sign Up</h2>
+          <h2 className="my-2 text-lg font-semibold text-blue-700">Sign In</h2>
           <div className="mb-4">
             <label className="mb-2 text-sm text-gray-900" htmlFor="email">
               Email
@@ -68,7 +59,7 @@ export default function SignUp({
             type="submit"
             className="rounded-md border-0 bg-blue-600 p-2 text-white outline-none"
           >
-            Sign Up
+            Sign In
           </button>
         </form>
       </div>
@@ -79,6 +70,7 @@ export default function SignUp({
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const client = buildClient(context)
   const { data } = await client.get('/api/users/currentuser')
+  console.log(data)
   if (data.currentUser) {
     return {
       redirect: {
