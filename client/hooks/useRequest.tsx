@@ -1,20 +1,30 @@
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import React, { useState } from 'react'
 import { IResponseErrors } from '../pages/auth/signup'
 
-interface UseRequestProps<T> {
+interface UseRequestProps<T, U> {
   method: 'get' | 'post' | 'delete' | 'put' | 'patch'
   url: string
-  body?: T
+  body?: U
+  onSuccess?: (data: T) => void
 }
 
-export const useRequest = <U, T>({ method, url, body }: UseRequestProps<T>) => {
+export const useRequest = <T, U>({
+  method,
+  url,
+  body,
+  onSuccess,
+}: UseRequestProps<T, U>) => {
   const [errors, setErrors] = useState<null | React.ReactChild>(null)
   const doRequest = async () => {
     setErrors(null)
     try {
-      const response = await axios[method](url, body)
-      return response.data
+      const { data } = await axios[method]<
+        any,
+        AxiosResponse<T, IResponseErrors[]>
+      >(url, body)
+      if (onSuccess) onSuccess(data)
+      return data
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const errs = err.response?.data.errors as IResponseErrors[]

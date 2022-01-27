@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { FormEvent, useState } from 'react'
 import { useRequest } from '../../hooks/useRequest'
 
@@ -14,10 +15,12 @@ export interface IPayload {
 export default function SignUp() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const router = useRouter()
   const { doRequest, errors } = useRequest<any, any>({
     method: 'post',
     url: '/api/users/signup',
     body: { email, password },
+    onSuccess: () => router.push('/'),
   })
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
