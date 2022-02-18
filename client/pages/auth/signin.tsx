@@ -70,7 +70,6 @@ export default function SignIn({
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const client = buildClient(context)
   const { data } = await client.get('/api/users/currentuser')
-  console.log(data)
   if (data.currentUser) {
     return {
       redirect: {
