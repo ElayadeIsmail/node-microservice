@@ -2,6 +2,7 @@ import { requireAuth, validateRequest } from '@eitickets/common';
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import { Ticket } from '../model/Ticket';
+// import { TicketCreatedPublisher } from '../events/publishers/ticket-created-publisher';
 
 const router = express.Router();
 
@@ -19,6 +20,9 @@ router.post(
     const { title, price } = req.body;
     const ticket = Ticket.build({ price, title, userId: req.currentUser!.id });
     await ticket.save();
+    // new TicketCreatedPublisher(client).publish({
+
+    // })
     res.status(201).send(ticket);
   }
 );
