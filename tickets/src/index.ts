@@ -10,9 +10,17 @@ const start = async () => {
     throw new Error('Mongo_url must be defined');
   }
   try {
-    await natsWrapper.connect('ticketing', 'qsqdq', 'http://nats-srv:4222');
     await mongoose.connect(process.env.MONGO_URI);
     console.log('Connected to MongoDb');
+    await natsWrapper.connect('ticketing', 'qsqdq', 'http://nats-srv:4222');
+    // close nats
+    natsWrapper.client.on('close', () => {
+      console.log('Closing Nats ');
+      process.exit();
+    });
+    // CALL nats close function after trying to shut dow process
+    process.on('SIGINT', () => natsWrapper.client.close());
+    process.on('SIGTERM', () => natsWrapper.client.close());
   } catch (err) {
     console.error(err);
   }
