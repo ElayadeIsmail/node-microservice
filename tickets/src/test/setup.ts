@@ -11,6 +11,7 @@ jest.mock('../nats-wrapper');
 let mongod: MongoMemoryServer;
 
 beforeAll(async () => {
+  jest.clearAllMocks();
   process.env.JWT_KEY = 'qsdfgh';
   // This will create an new instance of "MongoMemoryServer" and automatically start it
   mongod = await MongoMemoryServer.create();
