@@ -294,9 +294,9 @@
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
 "@eitickets/common@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@eitickets/common/-/common-1.0.4.tgz#1072f0940a9a7b426d4b12c41e3427550bb2f274"
-  integrity sha512-5KVMpo2nxmuY5h9TYy6vE6Jjl/g7c3h73kdXp1Anf0UJDahsL1ISn4J2efyeVgmO7JHQ9zaQWvg8K/xreJhpHw==
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@eitickets/common/-/common-1.0.5.tgz#88ed1d0d0cafb674dda7fc657d7aa4abd619c436"
+  integrity sha512-GJsObeSlXOtrQfPVAzNl/4PExFNxb4dZ85yHIRHAUGLJ+czhfYqt1AIceJ89Ab6kn/iIGZUDyW4LMPvTDuZ+iw==
   dependencies:
     "@types/cookie-session" "^2.0.44"
     "@types/express" "^4.17.13"
