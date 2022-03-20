@@ -1,9 +1,8 @@
 import mongoose from 'mongoose';
 import request from 'supertest';
 import { app } from '../../app';
+import { Order, OrderStatus } from '../../models/Order';
 import { Ticket } from '../../models/Ticket';
-
-const createTicket = {};
 
 it('should return 401 if user not authorized', () => {
   return request(app)
@@ -14,20 +13,18 @@ it('should return 401 if user not authorized', () => {
     .expect(401);
 });
 it('should return 400 if ticketId id not provided', () => {
-  const cookie = signin();
   return request(app)
     .post('/api/orders')
-    .set('Cookie', cookie)
+    .set('Cookie', signin())
     .send({
       ticketId: '',
     })
     .expect(400);
 });
 it('should return 400 if ticketId not mongodb id', () => {
-  const cookie = signin();
   return request(app)
     .post('/api/orders')
-    .set('Cookie', cookie)
+    .set('Cookie', signin())
     .send({
       ticketId: '123',
     })
@@ -43,6 +40,26 @@ it('should return 404 if ticket not found', async () => {
     })
     .expect(404);
 });
+
+it('should return 400 if ticket was reserved', async () => {
+  const ticket = Ticket.build({ price: 20, title: 'concert' });
+  await ticket.save();
+  const order = Order.build({
+    userId: new mongoose.Types.ObjectId().toHexString(),
+    expiresAt: new Date(),
+    status: OrderStatus.Created,
+    ticket: ticket,
+  });
+  await order.save();
+  await request(app)
+    .post('/api/orders')
+    .set('Cookie', signin())
+    .send({
+      ticketId: ticket.id,
+    })
+    .expect(400);
+});
+
 it('should return 201 if Order was created', async () => {
   const cookie = signin();
   const ticket = Ticket.build({ price: 20, title: 'concert' });
@@ -55,22 +72,5 @@ it('should return 201 if Order was created', async () => {
     })
     .expect(201);
 });
-it('should return 400 if ticket was reserved', async () => {
-  const cookie = signin();
-  const ticket = Ticket.build({ price: 20, title: 'concert' });
-  await ticket.save();
-  await request(app)
-    .post('/api/orders')
-    .set('Cookie', cookie)
-    .send({
-      ticketId: ticket.id,
-    })
-    .expect(201);
-  await request(app)
-    .post('/api/orders')
-    .set('Cookie', cookie)
-    .send({
-      ticketId: ticket.id,
-    })
-    .expect(400);
-});
+
+it.todo('emits an order created event');
