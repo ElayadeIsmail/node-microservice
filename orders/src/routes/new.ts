@@ -7,8 +7,10 @@ import {
 } from '@eitickets/common';
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
+import { OrderCreatePublisher } from '../events/publishers/order-created-publisher';
 import { Order } from '../models/Order';
 import { Ticket } from '../models/Ticket';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = express();
 
@@ -46,6 +48,16 @@ router.post(
       ticket,
     });
     await order.save();
+    new OrderCreatePublisher(natsWrapper.client).publish({
+      id: order.id,
+      userId: order.userId,
+      status: order.status,
+      expiresAt: order.expiresAt.toISOString(),
+      ticket: {
+        id: order.ticket.id,
+        price: order.ticket.price,
+      },
+    });
     res.status(201).send(order);
   }
 );
