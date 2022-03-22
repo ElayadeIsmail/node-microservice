@@ -4,6 +4,7 @@ import { Order, OrderStatus } from './Order';
 interface TicketAttrs {
   title: string;
   price: number;
+  id: string;
 }
 export interface TicketDoc extends mongoose.Document {
   title: string;
@@ -38,8 +39,8 @@ const ticketSchema = new mongoose.Schema(
 );
 
 // add function on the Model
-ticketSchema.statics.build = (attrs: TicketAttrs) => {
-  return new Ticket(attrs);
+ticketSchema.statics.build = ({ id, price, title }: TicketAttrs) => {
+  return new Ticket({ _id: id, price, title });
 };
 
 // add function on document
