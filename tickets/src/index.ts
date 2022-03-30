@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import { app } from './app';
+import { OrderCancelledListener } from './events/listeners/order-cancelled-listener';
+import { OrderCreatedListener } from './events/listeners/order-created-listener';
 import { natsWrapper } from './nats-wrapper';
 
 const start = async () => {
@@ -19,8 +21,6 @@ const start = async () => {
     throw new Error('NATS_CLUSTER_ID must be defined');
   }
   try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log('Connected to MongoDb');
     await natsWrapper.connect(
       process.env.NATS_CLUSTER_ID,
       process.env.NATS_CLIENT_ID,
@@ -34,9 +34,14 @@ const start = async () => {
     // CALL nats close function after trying to shut dow process
     process.on('SIGINT', () => natsWrapper.client.close());
     process.on('SIGTERM', () => natsWrapper.client.close());
+    new OrderCancelledListener(natsWrapper.client).listen();
+    new OrderCreatedListener(natsWrapper.client).listen();
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('Connected to MongoDb');
   } catch (err) {
     console.error(err);
   }
+
   app.listen(3000, () => {
     console.log('Listening on PORT 3000!!!!');
   });
