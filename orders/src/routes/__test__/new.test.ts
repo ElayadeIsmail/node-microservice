@@ -43,7 +43,11 @@ it('should return 404 if ticket not found', async () => {
 });
 
 it('should return 400 if ticket was reserved', async () => {
-  const ticket = Ticket.build({ price: 20, title: 'concert' });
+  const ticket = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
+    price: 20,
+    title: 'concert',
+  });
   await ticket.save();
   const order = Order.build({
     userId: new mongoose.Types.ObjectId().toHexString(),
@@ -63,7 +67,11 @@ it('should return 400 if ticket was reserved', async () => {
 
 it('should return 201 if Order was created', async () => {
   const cookie = signin();
-  const ticket = Ticket.build({ price: 20, title: 'concert' });
+  const ticket = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
+    price: 20,
+    title: 'concert',
+  });
   await ticket.save();
   return request(app)
     .post('/api/orders')
@@ -76,9 +84,13 @@ it('should return 201 if Order was created', async () => {
 
 it('emits an order created event', async () => {
   const cookie = signin();
-  const ticket = Ticket.build({ price: 20, title: 'concert' });
+  const ticket = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
+    price: 20,
+    title: 'concert',
+  });
   await ticket.save();
-  return request(app)
+  await request(app)
     .post('/api/orders')
     .set('Cookie', cookie)
     .send({
