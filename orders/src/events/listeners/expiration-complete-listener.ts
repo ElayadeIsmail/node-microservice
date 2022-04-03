@@ -21,16 +21,19 @@ export class ExpirationCompleteListener extends Listener<ExpirationCompleteEvent
     if (!order) {
       throw new Error('Order does not exist');
     }
-    if (order.status !== OrderStatus.Completed) {
-      order.set({ status: OrderStatus.Cancelled });
-      await order.save();
-
-      await new OrderCancelledPublisher(this.client).publish({
-        id: order.id,
-        version: order.version,
-        ticket: { id: order.ticket.id },
-      });
+    if (order.status === OrderStatus.Completed) {
+      return msg.ack();
     }
+
+    order.set({ status: OrderStatus.Cancelled });
+    await order.save();
+
+    await new OrderCancelledPublisher(this.client).publish({
+      id: order.id,
+      version: order.version,
+      ticket: { id: order.ticket.id },
+    });
+
     msg.ack();
   }
 }

@@ -8,7 +8,10 @@ import {
 } from '@eitickets/common';
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
+import { PaymentCreatedPublisher } from '../events/publishers/payment-created-publisher';
 import { Order } from '../models/Order';
+import { Payment } from '../models/Payment';
+import { natsWrapper } from '../nats-wrapper';
 import { stripe } from '../stripe';
 
 const router = express.Router();
@@ -33,12 +36,22 @@ router.post(
     if (order.status === OrderStatus.Cancelled) {
       throw new BadRequestError('this order was cancelled');
     }
-    await stripe.charges.create({
+    const stripeCharge = await stripe.charges.create({
       currency: 'usd',
       amount: order.price * 100,
       source: token,
     });
-    res.status(201).send({});
+    const payment = Payment.build({
+      orderId,
+      stripeId: stripeCharge.id,
+    });
+    await payment.save();
+    await new PaymentCreatedPublisher(natsWrapper.client).publish({
+      id: payment.id,
+      orderId: payment.orderId,
+      stripeId: payment.stripeId,
+    });
+    res.status(201).send({ id: payment.id });
   }
 );
 
