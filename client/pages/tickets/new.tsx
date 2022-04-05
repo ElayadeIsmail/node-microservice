@@ -2,6 +2,7 @@ import { GetServerSideProps } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { FormEvent, useState } from 'react'
+import { buildClient } from '../../api/buildClient'
 import { Header } from '../../components/Header'
 import { useRequest } from '../../hooks/useRequest'
 import { IUserPayload } from '../auth/signup'
@@ -94,11 +95,13 @@ export default function New({ currentUser }: HomeProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  // const client = buildClient(context)
-  // const { data } = await client.get('/api/users/currentuser')
+  const client = buildClient(context)
+  const {
+    data: { currentUser },
+  } = await client.get('/api/users/currentuser')
   return {
     props: {
-      currentUser: null,
+      currentUser,
     },
   }
 }
