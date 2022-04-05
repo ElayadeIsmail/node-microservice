@@ -16,13 +16,13 @@ export const useRequest = <T, U>({
   onSuccess,
 }: UseRequestProps<T, U>) => {
   const [errors, setErrors] = useState<null | React.ReactChild>(null)
-  const doRequest = async () => {
+  const doRequest = async (props = {}) => {
     setErrors(null)
     try {
       const { data } = await axios[method]<
         any,
         AxiosResponse<T, IResponseErrors[]>
-      >(url, body)
+      >(url, { ...body, ...props })
       if (onSuccess) onSuccess(data)
       return data
     } catch (err) {

@@ -10,7 +10,17 @@ export const Header = ({
     if (currentUser) {
       return (
         <ul className="flex text-sm">
-          <li className="mr-2">
+          <li className="mr-4">
+            <Link href="/tickets/new">
+              <a className="cursor-pointer">Sell Ticket</a>
+            </Link>
+          </li>
+          <li className="mr-4">
+            <Link href="/orders">
+              <a className="cursor-pointer">My orders</a>
+            </Link>
+          </li>
+          <li>
             <Link href="/auth/signout">
               <a className="cursor-pointer">Sign Out</a>
             </Link>

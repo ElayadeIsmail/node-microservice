@@ -37,7 +37,7 @@ export const TicketShow = ({ ticket, currentUser }: ShowTicketProps) => {
         <h4>Price: {ticket.price}</h4>
         {errors}
         <button
-          onClick={doRequest}
+          onClick={() => doRequest()}
           className="my-4 w-fit rounded-md bg-blue-500 p-2 text-white"
         >
           Purchase

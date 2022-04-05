@@ -1,13 +1,16 @@
 import { GetServerSideProps } from 'next'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import StripeCheckout from 'react-stripe-checkout'
 import { buildClient } from '../../api/buildClient'
 import { Header } from '../../components/Header'
+import { STRIPE_PUB_KEY } from '../../constants/vars'
+import { useRequest } from '../../hooks/useRequest'
 import { IUserPayload } from '../auth/signup'
 import { ITicket } from '../tickets/new'
 
-interface IOrder {
+export interface IOrder {
   id: string
   userId: string
   expiresAt: string
@@ -21,8 +24,20 @@ interface OrderProps {
   currentUser: IUserPayload
 }
 
-export const OrderShow = ({ currentUser, order }: OrderProps) => {
+const OrderShow = ({ currentUser, order }: OrderProps) => {
   const [timeLeft, setTimeLeft] = useState<number>(0)
+
+  const router = useRouter()
+
+  const { doRequest, errors } = useRequest({
+    url: '/api/payments',
+    method: 'post',
+    body: {
+      orderId: order.id,
+    },
+    onSuccess: () => router.push('/orders'),
+  })
+
   useEffect(() => {
     const findTimeLeft = () => {
       const msLeft = new Date(order.expiresAt).getTime() - new Date().getTime()
@@ -42,12 +57,13 @@ export const OrderShow = ({ currentUser, order }: OrderProps) => {
       </Head>
       <Header currentUser={currentUser} />
       <div className="container my-6 flex flex-col">
+        {errors}
         {timeLeft > 0 ? (
           <>
             <div>Time left to pay {timeLeft} seconds left</div>
             <StripeCheckout
-              token={(token) => console.log('token', token)}
-              stripeKey="pk_test_51KkU0fJwpwmPjRKY7Ugi0YEjc2S7o3bwJiXuoRFaMF0A9hzAbts4XJNzChe0dMka3B4EC48OLL1XDS6p8J00xjWE00jNjcQ7pz"
+              token={({ id }) => doRequest({ token: id })}
+              stripeKey={STRIPE_PUB_KEY!}
               amount={order.ticket.price * 100}
               email={currentUser.email}
             />
