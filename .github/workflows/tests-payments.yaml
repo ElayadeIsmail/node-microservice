@@ -5,9 +5,8 @@ on: pull_request
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      STRIPE_KEY: ${{ secrets.STRIPE_KEY }}
     steps:
-      - name: Running tests for payments service
-        uses: actions/checkout@v2
-        run: cd payments && yarn install && yarn test:ci
-        env:
-          STRIPE_KEY: ${{ secrets.STRIPE_KEY }}
+      - uses: actions/checkout@v2
+      - run: cd payments && yarn install && yarn test:ci
