@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import mongoose from 'mongoose';
 import { app } from './app';
 import { OrderCancelledListener } from './events/listeners/order-cancelled-listener';

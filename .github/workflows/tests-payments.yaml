@@ -8,6 +8,3 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: cd payments && yarn install && yarn test:ci
-        env:
-          STRIPE_KEY: ${{ secrets.STRIPE_KEY }}
-      - run: echo ${{ secrets.STRIPE_KEY }}
