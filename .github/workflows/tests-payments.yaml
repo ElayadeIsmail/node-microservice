@@ -7,8 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: create env file
-        run: |
-          touch .env
-          echo STRIPE_KEY=${{ secrets.STRIPE_KEY}} >> .env
       - run: cd payments && yarn install && yarn test:ci
+        env:
+          STRIPE_KEY: ${{ secrets.STRIPE_KEY }}
