@@ -7,7 +7,7 @@ import { TicketUpdatedListener } from './events/listeners/ticket-updated-listene
 import { natsWrapper } from './nats-wrapper';
 
 const main = async () => {
-  console.log('Staaarting');
+  console.log('Staaarting !!!!!');
 
   if (!process.env.JWT_KEY) {
     throw new Error('Jwt must be defined');
